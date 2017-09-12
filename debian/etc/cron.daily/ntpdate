@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# ntpdate
+
+[[ -x /usr/sbin/ntpdate-debian ]] || exit 1
+
+/usr/sbin/ntpdate-debian -u > /dev/null 2>&1
+
+exit 0
