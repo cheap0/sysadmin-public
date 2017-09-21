@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# Backup
+# @init 20161219
+# @author rafi@openswirl.org
+#
+set -e
+
+IDENT=$(/bin/hostname)
+RSYNC='/usr/bin/rsync'
+
+RSYNC_BASEPATH='rsync://172.16.55.12/servers'
+LAST_UPDATE_FILE='/tmp/LASTUPD'
+
+DIRLIST=(
+  '/etc'
+  '/usr/local'
+  '/opt/apps/monitoring'
+)
+
+[[ $(/usr/bin/id -u) -ne 0 ]] && (>&2 echo "ERROR: Are you root?") && exit 1
+
+[[ ! -x $RSYNC ]] && (>&2 echo "ERROR: $RSYNC not found.") && exit 1
+
+for DIRSYNC in ${DIRLIST[@]}; do
+  echo "$(date +'%F %T') - Synchronizing $DIRSYNC"
+  if [ ! -r $DIRSYNC ]; then
+    (>&2 echo "ERROR: Failed to sync $DIRSYNC - no read access. Skipping.")
+    continue
+  fi
+
+  echo "$(date +'%F %T') - $RSYNC -avzh $DIRSYNC $RSYNC_BASEPATH/$IDENT/$DIRSYNC"
+  $RSYNC -avzh --exclude '*.log' "$DIRSYNC/" "$RSYNC_BASEPATH/$IDENT/$DIRSYNC"
+done
+
+echo "$(date +'%F %T') - Creating timestamp file at $LAST_UPDATE_FILE and sync to $RSYNC_BASEPATH/$IDENT"
+echo "$(date +'%F')" > $LAST_UPDATE_FILE
+$RSYNC -avzh "$LAST_UPDATE_FILE" "$RSYNC_BASEPATH/$IDENT"
+
+echo "$(date +'%F %T') - All Done!"
+exit 0
