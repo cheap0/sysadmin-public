@@ -1,0 +1,8 @@
+# Don't forget to chmod 640 and chown root.mysql
+
+[client]
+port            = 3306
+socket          = /var/run/mysqld/mysqld.sock
+user            = root
+password        = your_root_password
+
