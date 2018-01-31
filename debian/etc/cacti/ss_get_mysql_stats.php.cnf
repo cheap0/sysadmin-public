@@ -1,0 +1,33 @@
+<?php
+/**
+ * Config file for percona cacti templates
+ * https://www.percona.com/doc/percona-monitoring-plugins/LATEST/cacti/installing-templates.html
+ * apt-get install percona-cacti-templates
+ **/
+
+$mysql_user = 'your-mysql-monitoring-user';
+$mysql_pass = 'your-mysql-password';
+$mysql_port = 3306;
+$mysql_ssl  = FALSE;
+$mysql_connection_timeout = 5;
+
+$heartbeat = FALSE;
+$heartbeat_utc = FALSE;
+$heartbeat_server_id = 0;
+$heartbeat_table = 'percona.heartbeat';
+
+$cache_dir  = '/tmp';
+$poll_time  = 300;
+$timezone   = null;
+$chk_options = array (
+   'innodb'  => true,
+   'master'  => FALSE,
+   'slave'   => FALSE,
+   'procs'   => true,
+   'get_qrt' => true,
+);
+
+$use_ss    = FALSE;
+$debug     = FALSE;
+$debug_log = FALSE;
+

@@ -1,0 +1,33 @@
+<?php
+/**
+ * Config file for percona cacti templates
+ * https://www.percona.com/doc/percona-monitoring-plugins/LATEST/cacti/installing-templates.html
+ * apt-get install percona-cacti-templates
+ **/
+
+$ssh_user   = 'cacti-x';
+$ssh_port   = 22;
+$ssh_iden   = '-i /etc/cacti/id_rsa';
+$ssh_tout   = 10;
+
+$remote_cmd_tout = FALSE;
+$cmd_tout   = 10;
+$nc_cmd     = 'nc -C';
+$cache_dir  = '/tmp';
+$poll_time  = 300;
+$timezone   = null;
+$use_ss     = FALSE;
+$use_ssh    = TRUE;
+$debug      = FALSE;
+$debug_log  = FALSE;
+
+$status_server = 'localhost';
+$status_url    = '/server-status';
+$http_user     = '';
+$http_pass     = '';
+$http_port     = 80;
+$memcache_host = 'localhost';
+$memcache_port = 11211;
+$redis_host    = 'localhost';
+$redis_port    = 6379;
+
