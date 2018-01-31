@@ -66,7 +66,7 @@ Based on Debian GNU/Linux Buster (current testing) for single host.
 ```console
 # apt install elinks curl dnsutils
 ```
-* Various
+* Various.
 ```console
 # apt install build-essential
 ```
@@ -77,12 +77,64 @@ Based on Debian GNU/Linux Buster (current testing) for single host.
 
 ### SSH Banner
 * Create _/etc/ssh-banner_ file.
-* Update Banner directive in _/etc/ssh/sshd_config_.
+* Update _Banner_ directive in _/etc/ssh/sshd_config_.
+
+### SSH Key
+* Copy your ssh key to _~/.ssh/authorized_keys_, or using _ssh-copy-id_ command.
 
 ## Web Server
 
+### Apache
+
+### Lighttpd
 
 ## MySQL Database
+Using Percona MySQL DB:
+
+1. Add repo to _/etc/apt/sources.list.d/_ (stable release).
+```
+deb http://repo.percona.com/apt stretct main
+```
+
+2. Add percona key.
+```console
+# apt-key adv --keyserver keys.gnupg.net --recv-keys 8507EFA5
+```
+
+3. Install Percona Server MySQL.
+```console
+# apt update
+# apt install percona-server-server-5.7
+```
+
+   Follow installation.
+
+4. Make sure it reads percona config file.
+```console
+# update-alternatives --list my.cnf
+/etc/mysql/percona-server.cnf
+```
+
+5. Config in mysqld.cnf
+* _innodb-file-per-table_ (default in 5.7).
+* _open-files-limit_ (see #6 below).
+* _innodb_thread_concurrency_ is 2 x CPU cores.
+* Set _innodb-buffer-pool-size_ to 75% of server RAM.
+* Disable slow query log.
+* _log_timestamps = system_ to show time in your current server timezone.
+
+6. Update systemd (under _[Service]_
+```
+LimitNOFILE=102400
+LimitNPROC=102400
+```
+
+   Don't forget to reload systemd.
+```console
+# systemctl daemon-reload
+```
+
+7. Create client.cnf, and update its permission to 640.
 
 
 ## Server Monitoring
@@ -90,4 +142,6 @@ Based on Debian GNU/Linux Buster (current testing) for single host.
 ### Cacti
 
 ### Zabbix
+
+## Backup
 
