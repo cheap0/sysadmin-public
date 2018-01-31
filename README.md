@@ -4,7 +4,7 @@ Debian System Administrator Repository
 ## debian
 Based on Debian Buster (current testing) for single host.
 
-### /etc/sysctl.conf
+### /etc/sysctl.d/\*
 Custom kernel flag.
 
 ### /etc/apt/\*
