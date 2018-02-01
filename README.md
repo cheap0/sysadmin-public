@@ -82,18 +82,29 @@ Based on Debian GNU/Linux Buster (current testing) for single host.
 ### SSH Key
 * Copy your ssh key to _~/.ssh/authorized_keys_, or using _ssh-copy-id_ command.
 
+## Firewall
+For a single host inside a secure network (private IP address), I would recommend using ufw. Fail2ban is necessary if you forward a port from the outside.
+
+### Monitoring
+Create a monitoring user.
+
 ## Web Server
 
 ### Apache
+*Not today*
 
 ### Lighttpd
+*Not today*
+
+### Nginx (Engine X)
+*Not today*
 
 ## MySQL Database
 Using Percona MySQL DB:
 
 1. Add repo to _/etc/apt/sources.list.d/_ (stable release).
 ```
-deb http://repo.percona.com/apt stretct main
+deb http://repo.percona.com/apt stretch main
 ```
 
 2. Add percona key.
@@ -101,13 +112,11 @@ deb http://repo.percona.com/apt stretct main
 # apt-key adv --keyserver keys.gnupg.net --recv-keys 8507EFA5
 ```
 
-3. Install Percona Server MySQL.
+3. Install Percona Server MySQL and follow installation.
 ```console
 # apt update
 # apt install percona-server-server-5.7
 ```
-
-   Follow installation.
 
 4. Make sure it reads percona config file.
 ```console
@@ -129,12 +138,24 @@ LimitNOFILE=102400
 LimitNPROC=102400
 ```
 
-   Don't forget to reload systemd.
+7. Don't forget to reload systemd.
 ```console
 # systemctl daemon-reload
 ```
 
-7. Create client.cnf, and update its permission to 640.
+8. Create client.cnf, and update its permission to 640.
+```console
+# chmod 640 /etc/mysql/percona-server.conf.d/client.cnf
+# chown root.mysql /etc/mysql/percona-server.conf.d/client.cnf
+```
+
+9. Restart MySQL, and remove test database.
+```console
+# systemctl restart mysql
+# mysql_secure_installation
+```
+
+10. Add a monitoring user.
 
 
 ## Server Monitoring
@@ -142,6 +163,23 @@ LimitNPROC=102400
 ### Cacti
 
 ### Zabbix
+1. Prerequisites: 
+   * web server with php (for frontend).
+   * database (I'm using MySQL).
+2. Add zabbix repo.
+```console
+# echo 'deb http://repo.zabbix.com/zabbix/3.4/debian stretch main' > /etc/apt/sources.list.d/stretch.zabbix.list
+# apt-key adv --keyserver keys.gnupg.net --recv-keys A14FE591
+# apt update
+```
+
+3. Install zabbix (with MySQL as its database) and php frontend.
+```console
+# apt install zabbix-server-mysql zabbix-frontend-php
+```
+
+4. Update config to your needs.
+5. For extra security, add http auth basic and/or restricts only for specific IP addresses.
 
 ## Backup
-
+*Not today*
