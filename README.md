@@ -17,6 +17,14 @@ Based on Debian GNU/Linux Buster (current testing) for single host.
 # apt update && apt dist-upgrade
 ```
 
+### Firmware
+* Check if all hardware is recognized.
+* Install necessary firmware.
+```console
+# apt install firmware-linux firmware-linux-nonfree
+```
+* Pin/name hardware (NIC, USB device, etc) in _udev_ if necessary.
+
 ### Text Editor
 * Personally, I prefer vim-nox over vim-tiny. 
 * Remove the default vim-tiny.
@@ -27,7 +35,7 @@ Based on Debian GNU/Linux Buster (current testing) for single host.
 ```console
 # apt install vim-nox
 ````
-* Edit vimrc/vimrc.local to your needs.
+* Edit _vimrc_ and/or _vimrc.local_ to your needs.
 
 ### Remove/Disable Unwanted Service
 * See installed and running services.
