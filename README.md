@@ -12,7 +12,7 @@ Based on Debian GNU/Linux Buster (current testing) for single host.
 # rm /var/lib/apt/lists/\*-en
 ```
 * Put 99translations file on _/etc/apt/apt.conf.d_.
-* Update and dist-upgrade
+* Update and dist-upgrade.
 ```console
 # apt update && apt dist-upgrade
 ```
@@ -82,11 +82,11 @@ Based on Debian GNU/Linux Buster (current testing) for single host.
 ### SSH Key
 * Copy your ssh key to _~/.ssh/authorized_keys_, or using _ssh-copy-id_ command.
 
-## Firewall
-For a single host inside a secure network (private IP address), I would recommend using ufw. Fail2ban is necessary if you forward a port from the outside.
-
 ### Monitoring
 Create a monitoring user.
+
+## Firewall
+For a single host inside a secure network (private IP address), I would recommend using ufw. Fail2ban is necessary if you forward a port from the outside.
 
 ## Web Server
 
@@ -161,11 +161,69 @@ LimitNPROC=102400
 ## Server Monitoring
 
 ### Cacti
+1. Prerequisites: 
+   * web server with php (for frontend).
+   * database (MySQL DB in this case).
+   
+2. Apt.
+```console
+# apt install cacti
+```
+
+3. For extra security, add http auth basic and/or restricts only for specific IP addresses.
+
+4. Use percona cacti template. Add percona repo if you haven't.
+```console
+# apt install percona-cacti-templates
+```
+
+5. Import templates you want to use.
+```console
+# cd /usr/share/cacti/resource/percona/templates
+# ls -1
+cacti_host_template_percona_apache_server_ht_0.8.6i-sver1.1.7.xml
+cacti_host_template_percona_galera_server_ht_0.8.6i-sver1.1.7.xml
+cacti_host_template_percona_gnu_linux_server_ht_0.8.6i-sver1.1.7.xml
+cacti_host_template_percona_jmx_server_ht_0.8.6i-sver1.1.7.xml
+cacti_host_template_percona_memcached_server_ht_0.8.6i-sver1.1.7.xml
+cacti_host_template_percona_mongodb_server_ht_0.8.6i-sver1.1.7.xml
+cacti_host_template_percona_mysql_server_ht_0.8.6i-sver1.1.7.xml
+cacti_host_template_percona_nginx_server_ht_0.8.6i-sver1.1.7.xml
+cacti_host_template_percona_openvz_server_ht_0.8.6i-sver1.1.7.xml
+cacti_host_template_percona_rds_server_ht_0.8.6i-sver1.1.7.xml
+cacti_host_template_percona_redis_server_ht_0.8.6i-sver1.1.7.xml
+# php /usr/share/cacti/cli/import_template.php \
+--filename=cacti_host_template_percona_gnu_linux_server_ht_0.8.6i-sver1.1.7.xml \
+--with-user-rras='1:2:3:4'
+# php /usr/share/cacti/cli/import_template.php \
+--filename=cacti_host_template_percona_mysql_server_ht_0.8.6i-sver1.1.7.xml \
+--with-user-rras='1:2:3:4'
+# php /usr/share/cacti/cli/import_template.php \
+--filename= cacti_host_template_percona_apache_server_ht_0.8.6i-sver1.1.7.xml \
+--with-user-rras='1:2:3:4'
+```
+6. Linux server template:
+   * Copy monitoring user rsa-key (_id_rsa_ and _id_rsa.pub_) to _/etc/cacti_. Make sure _id_rsa_ file only root and poller (cacti user) have read access.
+   * Copy configuration from _/usr/share/cacti/site/scripts/ss_get_by_ssh.php_ to _/etc/cacti/ss_get_by_ssh.php.cnf_ and modify to your needs (only the _CONFIGURATION_ part, delete the reset).
+   * Add device and graph from frontend.
+
+7. MySQL server template:
+   * Copy configuration from _/usr/share/cacti/site/scripts/ss_get_mysql_stats.php_ to _/etc/cacti/ss_get_mysql_stats.php.cnf_ and modify to your needs (only the _CONFIGURATION_ part, delete the reset).
+   * Add device and graph from frontend.
+
+8. Apache server template:
+   * Enable Apache mod-status only allowed for cacti poller IP addresses.
+   * Edit _/etc/cacti/ss_get_by_ssh.php.cnf_ to your needs.
+   * Add device and graph from frontend.
+
+9. Further reads about [percona cacti templates](https://www.percona.com/doc/percona-monitoring-plugins/LATEST/cacti/index.html).
+
 
 ### Zabbix
 1. Prerequisites: 
    * web server with php (for frontend).
    * database (I'm using MySQL).
+   
 2. Add zabbix repo.
 ```console
 # echo 'deb http://repo.zabbix.com/zabbix/3.4/debian stretch main' > /etc/apt/sources.list.d/stretch.zabbix.list
