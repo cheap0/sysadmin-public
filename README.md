@@ -9,7 +9,7 @@ Based on Debian GNU/Linux Buster (current testing) for single host.
 * Leave _/etc/apt/sources.list_ empty, then put on _/etc/apt/sources.list.d/_ for each repo. Filename format: _[repo].[codename].list_.
 * Disable translation. Delete any downloaded translation files.
 ```console
-# rm /var/lib/apt/lists/\*-en
+# rm /var/lib/apt/lists/*-en
 ```
 * Put 99translations file on _/etc/apt/apt.conf.d_.
 * Update and dist-upgrade.
@@ -99,7 +99,19 @@ For a single host inside a secure network (private IP address), I would recommen
 ## Web Server
 
 ### Apache
-*Not today*
+After installation:
+* Add _ServerName_ directive in _conf-available/fqdn.conf_, and enable it using _a2enconf fqdn_.
+* Copy and edit _security.conf_, then enable it.
+* Enable modules you want to use, and disable them if you don't.
+* Example, if you want to compress json, add this line in _/etc/apache/mods-available/deflate.conf_:
+```
+AddOutputFilterByType DEFLATE application/json
+```
+* Enable status module if you want to monitor your webserver via cacti.
+* Disable serve-cgi-bin configuration if you don't know what it is.
+* Adjust _MaxRequestWorkers_ on _mpm_prefork.conf_ to your needs (I assume you are using PHP with this apache module).
+* For multiple vhost, do not edit _sites-available/default.conf_!
+* If you are using cacti or phpmyadmin, add extra security by adding Auth-Basic authentification. 
 
 ### Lighttpd
 *Not today*
@@ -140,7 +152,7 @@ deb http://repo.percona.com/apt stretch main
 * Disable slow query log.
 * _log_timestamps = system_ to show time in your current server timezone.
 
-6. Update systemd (under _[Service]_
+6. Update systemd (under _[Service]_)
 ```
 LimitNOFILE=102400
 LimitNPROC=102400
