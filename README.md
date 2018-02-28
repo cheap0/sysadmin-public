@@ -256,8 +256,33 @@ cacti_host_template_percona_redis_server_ht_0.8.6i-sver1.1.7.xml
 # apt install zabbix-server-mysql zabbix-frontend-php
 ```
 
-4. Update config to your needs.
-5. For extra security, add http auth basic and/or restricts only for specific IP addresses.
+4. Create zabbix mysql user and database, then import zabbix initial database.
+```console
+$ mysql -u root -p
+Enter password:
+mysql> CREATE USER 'zabbix'@'%' IDENTIFIED WITH mysql_native_password AS '***';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> GRANT USAGE ON *.* TO 'zabbix'@'%' REQUIRE NONE WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> CREATE DATABASE IF NOT EXISTS `zabbix`;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> GRANT ALL PRIVILEGES ON `zabbix`.* TO 'zabbix'@'%';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> \q
+
+$ cp -p /usr/share/doc/zabbix-server-mysql/create.sql.gz /tmp
+$ cd /tmp
+$ gunzip create.sql.gz
+$ mysql -u zabbix -p zabbix < /tmp/create.sql
+Enter password:
+$
+```
+5. Update config to your needs.
+6. For extra security, add http auth basic and/or restricts only for specific IP addresses.
 
 ## Backup
 *Not today*
